@@ -1,6 +1,6 @@
 #include "WindowManager.hpp"
 
-namespace WindowManager {
+namespace WinWallpaper {
 
     BOOL CALLBACK EnumWindowsProc(HWND tophandle, LPARAM lParam) {
 
