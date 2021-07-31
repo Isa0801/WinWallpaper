@@ -124,23 +124,4 @@ namespace WinWallpaper {
 	}
 
 
-	void Tools::loadTextureFromDir(std::string dirPath) {
-
-		for (const auto& entry : std::filesystem::directory_iterator(dirPath)) {
-			//std::cout << entry.path() << " " << entry.path().extension()  << std::endl;
-			if (!entry.exists())
-				continue;
-			if (entry.path().extension() == ".png" || entry.path().extension() == ".jpg")
-			{
-				sf::Texture temp;
-				temp.loadFromFile(entry.path().u8string());
-				temp.setSmooth(true);
-
-				texQueu.push_back(temp);
-
-			}
-
-		}
-	}
-
 }

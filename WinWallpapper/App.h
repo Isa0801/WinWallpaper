@@ -1,3 +1,10 @@
+/*
+ App will take care of drawing images on desktop window,
+ you can pass path of images (png or jpg) by setDir(path).
+ you have different options, such transition, transition durration,
+ image durration and etc. keep in mind to setFrameLimit(rate) so your gpu wont try to get maximum rate.
+*/
+
 #pragma once
 #ifndef App_HEADER
 #define App_HEADER
@@ -10,6 +17,9 @@
 #include <memory>
 #include <deque>
 #include <time.h> 
+#include <Audioclient.h>
+#include <Audiopolicy.h>
+#include <mmdeviceapi.h>
 
 namespace WinWallpaper {
 
@@ -38,7 +48,8 @@ namespace WinWallpaper {
 		
 
 	private:
-		
+		IMMDevice* pDevice = NULL;
+		IAudioClient* pClient = NULL;
 		std::shared_ptr<sf::RenderWindow> appWindow;
 		std::shared_ptr<Tools> tool;
 		std::shared_ptr<Clock> clock;

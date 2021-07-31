@@ -1,3 +1,7 @@
+/*
+ returns hwnd of the desktop
+*/
+
 #pragma once
 
 #ifndef WALLPAPPER_MANAGER

@@ -7,7 +7,10 @@ namespace WinWallpaper {
 		appWindow = std::make_shared<sf::RenderWindow>(getWPWindow());
 		tool = std::make_shared<Tools>(appWindow.get());
 		clock = std::make_shared<Clock>();
+
+		// setting seed, so that we will get random number each run.
 		std::srand(std::time(NULL));
+
 	}
 
 	App::~App() {
@@ -15,6 +18,7 @@ namespace WinWallpaper {
 			appWindow->close();
 	}
 
+	//===============setter============
 	void App::setCenter(bool state) {
 		tool->centerB = state;
 	}
@@ -60,6 +64,10 @@ namespace WinWallpaper {
 		appWindow->setFramerateLimit(rate);
 	}
 
+	//===============end of setter============
+
+	//=============Extra=============
+
 	void App::loadTextureFromDir() {
 
 		if (dir == "")
@@ -81,14 +89,20 @@ namespace WinWallpaper {
 
 		}
 
+		curTex = std::rand() % queueOfTex.size();
+
 		if (queueOfTex.empty())
-			mainSprite.setTexture(queueOfTex[0]);
+			mainSprite.setTexture(queueOfTex[curTex]);
 
 	}
 
 	bool App::isOpen() {
 		return appWindow->isOpen();
 	}
+
+	//=============end of Extra=============
+
+	//===========Logic of app==============
 
 	void App::events() {
 		sf::Event event;
@@ -158,6 +172,9 @@ namespace WinWallpaper {
 		appWindow->display();
 
 	}
+
+
+	//===========end of app==============
 
 }
 
