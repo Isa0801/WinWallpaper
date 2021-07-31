@@ -91,7 +91,7 @@ namespace WinWallpaper {
 
 		curTex = std::rand() % queueOfTex.size();
 
-		if (queueOfTex.empty())
+		if (!queueOfTex.empty())
 			mainSprite.setTexture(queueOfTex[curTex]);
 
 	}
