@@ -17,6 +17,7 @@
 #include <memory>
 #include <deque>
 #include <time.h> 
+#include <filesystem>
 #include <Audioclient.h>
 #include <Audiopolicy.h>
 #include <mmdeviceapi.h>
