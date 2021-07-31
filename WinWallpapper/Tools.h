@@ -1,12 +1,15 @@
+/*
+ tools will take effects on sprites/texture,
+ like centering to the screen, scalling sprites and etc
+*/
+
 #pragma once
 #ifndef Tools_HEADER
 #define Tools_HEADER
 #include <SFML/Graphics.hpp>
 #include "WindowManager.hpp"
-#include "Clock.h"
 #include <Windows.h>
 #include <WinUser.h>
-#include <deque>
 #include <filesystem>
 #include <string>
 
@@ -17,7 +20,7 @@ namespace WinWallpaper {
 	public:
 		Tools(sf::RenderWindow*);
 		~Tools();
-		void loadTextureFromDir(std::string);
+		// calls all of the options such as center, cover and fit
 		void preProcess(sf::Sprite&);
 		sf::Sprite transition(sf::Texture&, sf::Texture&, float = 0, bool = true);
 
@@ -39,7 +42,6 @@ namespace WinWallpaper {
 		sf::RenderTexture mainTexture;
 		sf::Sprite mainSprite;
 		sf::View mainView;
-		std::deque<sf::Texture> texQueu;
 		sf::RenderWindow* tWin;
 	};
 
