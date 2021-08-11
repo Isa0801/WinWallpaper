@@ -12,15 +12,13 @@
 #include "Clock.h"
 #include "Tools.h"
 #include "WindowManager.hpp"
+#include "Audio.h"
 #include <thread>
 #include <mutex>
 #include <memory>
 #include <deque>
 #include <time.h> 
 #include <filesystem>
-#include <Audioclient.h>
-#include <Audiopolicy.h>
-#include <mmdeviceapi.h>
 
 namespace WinWallpaper {
 
@@ -49,8 +47,7 @@ namespace WinWallpaper {
 		
 
 	private:
-		IMMDevice* pDevice = NULL;
-		IAudioClient* pClient = NULL;
+		Audio audio;
 		std::shared_ptr<sf::RenderWindow> appWindow;
 		std::shared_ptr<Tools> tool;
 		std::shared_ptr<Clock> clock;

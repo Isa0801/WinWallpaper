@@ -118,6 +118,9 @@ namespace WinWallpaper {
 
 	void App::update() {
 
+		audio.fetchData();
+		
+
 		tool->preProcess(mainSprite);
 		clock->stop();
 		if (!loadNextTex && clock->getMs() >= imageDurMs && slideShow)
@@ -156,15 +159,13 @@ namespace WinWallpaper {
 			}
 			else
 				mainSprite = tool->transition(queueOfTex[curTex], queueOfTex[nextTex], (float)mst / transDurMs, true);
-
-
 		}
 		
 	}
 
 	void App::render() {
 
-		if (mainSprite.getTexture() == NULL || !isOpen())
+		if (!isOpen())
 			return;
 
 		appWindow->clear();
