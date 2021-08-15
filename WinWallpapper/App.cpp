@@ -1,5 +1,9 @@
 #include "App.h"
 #include <iostream>
+#include <vector>
+
+
+
 
 namespace WinWallpaper {
 
@@ -10,6 +14,12 @@ namespace WinWallpaper {
 
 		// setting seed, so that we will get random number each run.
 		std::srand(std::time(NULL));
+
+		// load only the fragment shader
+		if (!shader.loadFromFile("HueShift.frag", sf::Shader::Fragment))
+		{
+			std::cout << "shader error";
+		}
 
 	}
 
@@ -32,11 +42,11 @@ namespace WinWallpaper {
 	}
 
 	void App::setTransition(bool state) {
-		transition = state;
+		transitionB = state;
 	}
 
 	void App::setRndTex(bool state) {
-		rndTex = state;
+		rndTexB = state;
 	}
 
 	void App::setFitToCover(bool state) {
@@ -44,7 +54,19 @@ namespace WinWallpaper {
 	}
 
 	void App::setSlideShow(bool state) {
-		slideShow = state;
+		slideShowB = state;
+	}
+
+	void App::setBeatOnBass(bool state) {
+		beatOnBassB = state;
+	}
+
+	void App::setHueShiftOnBeat(bool state) {
+		hueShiftOnBeatB = state;
+	}
+
+	void App::setHueShift(bool state) {
+		hueShiftB = state;
 	}
 
 	void App::setDir(std::string path){
@@ -62,7 +84,9 @@ namespace WinWallpaper {
 
 	void App::setFrameLimit(int rate) {
 		appWindow->setFramerateLimit(rate);
+		frames = rate;
 	}
+
 
 	//===============end of setter============
 
@@ -74,7 +98,7 @@ namespace WinWallpaper {
 			return;
 
 		for (const auto& entry : std::filesystem::directory_iterator(dir)) {
-			std::cout << entry.path() << " " << entry.path().extension()  << std::endl;
+			//std::cout << entry.path() << " " << entry.path().extension()  << std::endl;
 			if (!entry.exists())
 				continue;
 			if (entry.path().extension() == ".png" || entry.path().extension() == ".jpg")
@@ -100,6 +124,103 @@ namespace WinWallpaper {
 		return appWindow->isOpen();
 	}
 
+	void App::slideToNextTex() {
+
+		clock->stop();
+
+		// show tex for x amount of ms
+		if (!loadNextTexB && clock->getMs() >= imageDurMs)
+		{
+			clock->getMs(true);
+			loadNextTexB = !loadNextTexB;
+			if (rndTexB)
+				nextTex = std::rand() % queueOfTex.size();
+			else
+			{
+				if (nextTex == queueOfTex.size())
+					nextTex = 0;
+				else
+					nextTex++;
+			}
+		} else if (loadNextTexB) {
+			long mst = clock->getMs();
+
+			// if there are only 1 texture than just return
+			if (queueOfTex.size() < 2) {
+				clock->getMs(true);
+				loadNextTexB = !loadNextTexB;
+				return;
+			}
+
+			if (mst >= transDurMs || !transitionB)
+			{
+				clock->getMs(true);
+				loadNextTexB = !loadNextTexB;
+				mainSprite = tool->transition(queueOfTex[curTex], queueOfTex[nextTex], 1, true);
+				curTex = nextTex;
+
+			}
+			else
+				mainSprite = tool->transition(queueOfTex[curTex], queueOfTex[nextTex], (float)mst / transDurMs, true);
+		}
+
+	}
+
+	void App::beatOnBass() {
+		audio.fetchData();
+
+		float bv = audio.fftData[0] + audio.fftData[1] + audio.fftData[2] + audio.fftData[3] + audio.fftData[4] + audio.fftData[5] + audio.fftData[6] + audio.fftData[7];
+		bv /= 8;
+
+		bv = sqrt(bv) * 100;
+
+		static bool beated = false;
+
+
+		if (bv >= beatThresshold && !beated){
+			counter = 0;
+			//std::cout << bv << " bass beat\n";
+
+			sf::View v = appWindow.get()->getDefaultView();
+
+			if (hueShiftOnBeatB)
+				hueShiftValue += 0.10f;
+
+			if (bv >= 15){
+				v.zoom(0.98f);
+			}
+			else{
+				v.zoom(0.99f);
+			}
+
+
+			appWindow.get()->setView(v);
+			beated = true;
+
+		}
+		else if (counter > frames / 4 && beated) {
+			counter = 0;
+			//std::cout << " reset beat\n";
+			beated = !beated;
+			appWindow.get()->setView(appWindow.get()->getDefaultView());
+		}
+
+	}
+
+	void App::hueShift() {
+
+		hueShiftValue += 0.01f;
+
+		if (hueShiftValue > 2 * 3.1415f)
+		{
+			hueShiftValue = 0.0f;
+		}
+
+		shader.setUniform("texture", sf::Shader::CurrentTexture);
+
+		shader.setUniform("shift", hueShiftValue);
+	}
+
 	//=============end of Extra=============
 
 	//===========Logic of app==============
@@ -118,49 +239,18 @@ namespace WinWallpaper {
 
 	void App::update() {
 
-		audio.fetchData();
 		
-
 		tool->preProcess(mainSprite);
-		clock->stop();
-		if (!loadNextTex && clock->getMs() >= imageDurMs && slideShow)
-		{
-			clock->getMs(true);
-			loadNextTex = !loadNextTex;
-			if (rndTex)
-				nextTex = std::rand()% queueOfTex.size();
-			else
-			{
-				if (nextTex == queueOfTex.size())
-					nextTex = 0;
-				else
-					nextTex++;
-			}
-		}
 
-		if (loadNextTex && slideShow) {
-			long mst = clock->getMs();
+		if (slideShowB)
+			slideToNextTex();
 
-			if(queueOfTex.size() < 2){
-				clock->getMs(true);
-				loadNextTex = !loadNextTex;
-			}
+		if (beatOnBassB)
+			beatOnBass();
 
+		if (hueShiftB)
+			hueShift();
 
-
-
-			if (mst >= transDurMs || !transition)
-			{
-				clock->getMs(true);
-				loadNextTex = !loadNextTex;
-				mainSprite = tool->transition(queueOfTex[curTex], queueOfTex[nextTex], 1, true);
-				curTex = nextTex;
-
-			}
-			else
-				mainSprite = tool->transition(queueOfTex[curTex], queueOfTex[nextTex], (float)mst / transDurMs, true);
-		}
-		
 	}
 
 	void App::render() {
@@ -168,8 +258,11 @@ namespace WinWallpaper {
 		if (!isOpen())
 			return;
 
+		if (beatOnBassB)
+			counter++;
+
 		appWindow->clear();
-		appWindow->draw(mainSprite);
+		appWindow->draw(mainSprite, &shader);
 		appWindow->display();
 
 	}

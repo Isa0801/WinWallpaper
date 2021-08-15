@@ -95,7 +95,7 @@
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>C:\dev\SFML-2.5.1\lib;C:\dev\Bass\bass24\c;C:\dev\Bass\basswasapi24\c</AdditionalLibraryDirectories>
-      <AdditionalDependencies>sfml-graphics-s-d.lib;sfml-system-s-d.lib;sfml-window-s-d.lib;gdi32.lib;opengl32.lib;winmm.lib;%(AdditionalDependencies);bass.lib;basswasapi.lib</AdditionalDependencies>
+      <AdditionalDependencies>sfml-graphics-s-d.lib;sfml-system-s-d.lib;sfml-window-s-d.lib;gdi32.lib;glu32.lib;opengl32.lib;winmm.lib;%(AdditionalDependencies);bass.lib;basswasapi.lib</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -115,7 +115,7 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>C:\dev\SFML-2.5.1\lib;C:\dev\Bass\bass24\c;C:\dev\Bass\basswasapi24\c</AdditionalLibraryDirectories>
-      <AdditionalDependencies>sfml-graphics-s.lib;sfml-main.lib;sfml-system-s.lib;sfml-window-s.lib;gdi32.lib;opengl32.lib;winmm.lib;%(AdditionalDependencies);bass.lib;basswasapi.lib</AdditionalDependencies>
+      <AdditionalDependencies>sfml-graphics-s.lib;sfml-main.lib;sfml-system-s.lib;sfml-window-s.lib;gdi32.lib;opengl32.lib;winmm.lib;glu32.lib;%(AdditionalDependencies);bass.lib;basswasapi.lib</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -160,6 +160,9 @@
     <ClInclude Include="Clock.h" />
     <ClInclude Include="Tools.h" />
     <ClInclude Include="WindowManager.hpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="HueShift.frag" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
