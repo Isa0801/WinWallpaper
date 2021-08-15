@@ -12,15 +12,14 @@
 #include "Clock.h"
 #include "Tools.h"
 #include "WindowManager.hpp"
+#include "Audio.h"
 #include <thread>
 #include <mutex>
 #include <memory>
 #include <deque>
 #include <time.h> 
 #include <filesystem>
-#include <Audioclient.h>
-#include <Audiopolicy.h>
-#include <mmdeviceapi.h>
+#include <vector>
 
 namespace WinWallpaper {
 
@@ -46,28 +45,45 @@ namespace WinWallpaper {
 		void setTransition(bool);
 		void setSlideShow(bool);
 		void setRndTex(bool);
+		void setBeatOnBass(bool);
+		void setHueShift(bool);
+		void setHueShiftOnBeat(bool);
+
 		
 
 	private:
-		IMMDevice* pDevice = NULL;
-		IAudioClient* pClient = NULL;
+		int frames = 0, counter;
+		Audio audio;
 		std::shared_ptr<sf::RenderWindow> appWindow;
 		std::shared_ptr<Tools> tool;
 		std::shared_ptr<Clock> clock;
 		std::deque<sf::Texture> queueOfTex;
+		sf::Shader shader;
 		sf::Sprite mainSprite;
 		std::string dir;
 		std::mutex guard;
+
 		int curTex = 0;
 		int nextTex = 1;
-		bool transition = false;
-		bool slideShow = false;
-		bool rndTex = false;
-		bool loadNextTex = false;
+		int beatThresshold = 10;
+		float hueShiftValue = 0.0f;
+
+		bool transitionB = false;
+		bool slideShowB = false;
+		bool rndTexB = false;
+		bool loadNextTexB = false;
+		bool beatOnBassB = false;
+		bool hueShiftOnBeatB = false;
+		bool hueShiftB = false;
+
+
 		long imageDurMs = 5000;
 		long transDurMs = 3000;
-
 		void loadTextureFromDir();
+		void slideToNextTex();
+		void beatOnBass();
+		void hueShift();
+
 	};
 
 

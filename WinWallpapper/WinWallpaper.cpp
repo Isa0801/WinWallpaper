@@ -29,6 +29,9 @@ int main(int argc, char** argv)
     app.setTransition(true);
     app.setFrameLimit(30);
     app.setRndTex(true);
+    app.setBeatOnBass(true);
+    app.setHueShift(true);
+    app.setHueShiftOnBeat(true);
 
     while (app.isOpen())
     {
